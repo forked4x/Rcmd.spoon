@@ -3,7 +3,7 @@ obj.__index = obj
 
 -- Metadata
 obj.name = "Rcmd"
-obj.version = "0.1"
+obj.version = "0.1.1"
 obj.author = "forked4x <forked4x@icloud.com>"
 obj.homepage = "https://github.com/forked4x/Rcmd.spoon"
 obj.license = "MIT - https://opensource.org/licenses/MIT"
@@ -35,9 +35,14 @@ function obj:bindHotkeys(mapping)
     self.modal:bind(mods, key, function()
       if type(name) == "function" then
         self.modal:exit()
+        self.active = false
         hs.timer.doAfter(0.05, function()
           name()
-          self.modal:enter()
+          ---@diagnostic disable-next-line: undefined-field
+          if hs.eventtap.checkKeyboardModifiers().cmd then
+            self.active = true
+            self.modal:enter()
+          end
         end)
       elseif type(name) == "string" then
         hs.timer.doAfter(0, function()
